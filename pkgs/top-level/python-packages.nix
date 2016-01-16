@@ -5791,7 +5791,29 @@ in modules // {
     propagatedBuildInputs = with self; [ logilab_common ];
   };
 
-  mailchimp = buildPythonPackage rec {
+  lpod = buildPythonPackage rec {
+    version = "1.1.5";
+    name = "python-lpod-${version}";
+    # lpod library currently does not support Python 3.x
+    disabled = isPy3k;
+
+    propagatedBuildInputs = with self; [ ];
+
+    src = pkgs.fetchFromGitHub {
+      owner = "lpod";
+      repo = "lpod-python";
+      rev = "v${version}";
+      sha256 = "1g909li511jkpcl26j1dzg8gn1ipkc374sh8vv54dx30sl0xfqxf";
+    };
+
+    meta = {
+      homepage = https://github.com/lpod/lpod-python/;
+      description = "Library implementing the ISO/IEC 26300 OpenDocument Format standard (ODF) ";
+      license = licenses.gpl3;
+    };
+  };
+
+mailchimp = buildPythonPackage rec {
     version = "2.0.9";
     name = "mailchimp-${version}";
 
@@ -14701,18 +14723,24 @@ in modules // {
     };
   };
 
-  pyaudio = buildPythonPackage rec {
+  pyaudio = pkgs.stdenv.mkDerivation rec {
     name = "python-pyaudio-${version}";
-    version = "0.2.9";
+    version = "0.2.4";
 
     src = pkgs.fetchurl {
-      url = "https://pypi.python.org/packages/source/P/PyAudio/PyAudio-${version}.tar.gz";
-      sha256 = "bfd694272b3d1efc51726d0c27650b3c3ba1345f7f8fdada7e86c9751ce0f2a1";
+      url = "http://people.csail.mit.edu/hubert/pyaudio/packages/pyaudio-${version}.tar.gz";
+      md5 = "623809778f3d70254a25492bae63b575";
     };
 
-    disabled = isPyPy;
+    buildInputs = with self; [ python pkgs.portaudio ];
 
-    buildInputs = with self; [ pkgs.portaudio ];
+    buildPhase = if stdenv.isDarwin then ''
+      PORTAUDIO_PATH="${pkgs.portaudio}" ${python}/bin/${python.executable} setup.py build --static-link
+    '' else ''
+      ${python}/bin/${python.executable} setup.py build
+    '';
+
+    installPhase = "${python}/bin/${python.executable} setup.py install --prefix=$out";
 
     meta = {
       description = "Python bindings for PortAudio";
@@ -15439,24 +15467,6 @@ in modules // {
       description = "3D mathematical functions using NumPy";
       homepage = https://github.com/adamlwgriffiths/Pyrr/;
       license = licenses.bsd2;
-    };
-  };
-
-  pyshp = buildPythonPackage rec {
-    name = "pyshp-${version}";
-    version = "1.2.3";
-
-    src = pkgs.fetchurl {
-      url = "https://pypi.python.org/packages/source/p/pyshp/pyshp-${version}.tar.gz";
-      sha256 = "e18cc19659dadc5ddaa891eb780a6958094da0cf105a1efe0f67e75b4fa1cdf9";
-    };
-
-    buildInputs = with self; [ setuptools ];
-
-    meta = {
-      description = "Pure Python read/write support for ESRI Shapefile format";
-      homepage = https://github.com/GeospatialPython/pyshp;
-      license = licenses.mit;
     };
   };
 
