@@ -14555,6 +14555,8 @@ let
 
   newtonwars = callPackage ../games/newtonwars { };
 
+  notpacman = callPackage ../games/notpacman { love = love_0_7; };
+
   odamex = callPackage ../games/odamex { };
 
   oilrush = callPackage ../games/oilrush { };
