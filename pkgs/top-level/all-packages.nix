@@ -14163,6 +14163,8 @@ in
 
   tribler = callPackage ../applications/networking/p2p/tribler { };
 
+  trojita = callPackage ../applications/networking/mailreaders/trojita { };
+
   github-release = callPackage ../development/tools/github/github-release { };
 
   tudu = callPackage ../applications/office/tudu { };
