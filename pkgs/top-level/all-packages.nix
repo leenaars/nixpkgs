@@ -4115,6 +4115,8 @@ let
 
   elmPackages = recurseIntoAttrs (callPackage ../development/compilers/elm { });
 
+  faucc = callPackage ../development/compilers/faucc { };
+
   adobe_flex_sdk = callPackage ../development/compilers/adobe-flex-sdk { };
 
   fpc = callPackage ../development/compilers/fpc { };
