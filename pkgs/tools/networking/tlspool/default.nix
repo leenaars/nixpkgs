@@ -1,7 +1,7 @@
 # Nix recipe for TLS Pool. 
 
 { stdenv, fetchurl, unzip, libtool, pkgconfig, git, gnutls, p11_kit,
-  libtasn1, db, openldap, libmemcached, cyrus_sasl, openssl, softhsm, bash 
+  libtasn1, db, openldap, libmemcached, cyrus_sasl, openssl, softhsm, python
 }:   
 
 let 
@@ -14,7 +14,7 @@ stdenv.mkDerivation {
   src = ./../../../../../../software/tlspool/. ;
 
   buildInputs = [ pkgconfig unzip git gnutls p11_kit libtasn1 db openldap
-  libmemcached cyrus_sasl openssl softhsm bash ];
+  libmemcached cyrus_sasl openssl softhsm python];
 
   phases = [ "unpackPhase" "buildPhase" "installPhase" ];
   
