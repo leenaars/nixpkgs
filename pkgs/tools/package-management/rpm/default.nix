@@ -12,9 +12,14 @@ stdenv.mkDerivation rec {
 
   # Note: we don't add elfutils to buildInputs, since it provides a
   # bad `ld' and other stuff.
-  NIX_CFLAGS_COMPILE = "-I${nspr}/include/nspr -I${nss}/include/nss -I${elfutils}/include";
+  NIX_CFLAGS_COMPILE = "-I${nspr.dev}/include/nspr -I${nss.dev}/include/nss -I${elfutils}/include";
 
   NIX_CFLAGS_LINK = "-L${elfutils}/lib";
+
+  postPatch = ''
+    # For Python3, the original expression evaluates as 'python3.4' but we want 'python3.4m' here
+    substituteInPlace configure --replace 'python''${PYTHON_VERSION}' ${python.executable}
+  '';
 
   configureFlags = "--with-external-db --without-lua --enable-python";
 

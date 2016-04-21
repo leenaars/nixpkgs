@@ -20,11 +20,11 @@
 
 let
   # NOTE: When updating, please also update in current stable, as older versions stop working
-  version = "3.12.4";
+  version = "3.18.1";
   sha256 =
     {
-      "x86_64-linux" = "0xq5gjqmrl4fn6vp7krj44jhb71npxvsjzbqb01whyyw7mdlc8gf";
-      "i686-linux" = "093bfnak5xv50p9fxpr68w25hc1d08fcvrqnb4a6nb9wdfv3lkr6";
+      "x86_64-linux" = "1qdahr8xzk3zrrv89335l3aa2gfgjn1ymfixj9zgipv34grkjghm";
+      "i686-linux" = "015bjkr2dwyac410i398qm1v60rqln539wcj5f25q776haycbcji";
     }."${stdenv.system}" or (throw "system ${stdenv.system} not supported");
 
   arch =
@@ -36,7 +36,7 @@ let
   # relative location where the dropbox libraries are stored
   appdir = "opt/dropbox";
 
-  ldpath = stdenv.lib.makeSearchPath "lib"
+  ldpath = stdenv.lib.makeLibraryPath
     [
       dbus_libs gcc.cc glib libdrm libffi libICE libSM libX11 libXmu
       ncurses popt qtbase qtdeclarative qtwebkit zlib

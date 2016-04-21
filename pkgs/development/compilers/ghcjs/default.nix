@@ -20,9 +20,10 @@
 , ghcjs-prim
 , regex-posix
 
-, ghc, gmp
+, bootPkgs, gmp
 , jailbreak-cabal
 
+, runCommand
 , nodejs, stdenv, filepath, HTTP, HUnit, mtl, network, QuickCheck, random, stm
 , time
 , zlib, aeson, attoparsec, bzlib, hashable
@@ -37,18 +38,30 @@
 , coreutils
 , libiconv
 
-, ghcjsBoot ? import ./ghcjs-boot.nix { inherit fetchgit; }
+, ghcjsBootSrc ? fetchgit {
+    url = git://github.com/ghcjs/ghcjs-boot.git;
+    rev = "758e79e420403e0f6625eda19b10c46564f7cbb5";
+    sha256 = "0gq1mc86cb2z875a7sdj44yy8g95rwxzkl3z1q8gg33k05s3b58r";
+    fetchSubmodules = true;
+  }
+, ghcjsBoot ? import ./ghcjs-boot.nix {
+    inherit runCommand;
+    src = ghcjsBootSrc;
+  }
 , shims ? import ./shims.nix { inherit fetchFromGitHub; }
 }:
-let version = "0.2.0"; in
-mkDerivation (rec {
+let
+  inherit (bootPkgs) ghc;
+  version = "0.2.0";
+
+in mkDerivation (rec {
   pname = "ghcjs";
   inherit version;
   src = fetchFromGitHub {
     owner = "ghcjs";
     repo = "ghcjs";
-    rev = "561365ba1667053b5dc5846e2a8edb33eaa3f6dd";
-    sha256 = "1vfa7j0ql3sng29m944iznjw9hcmyl57nfkgxa33dvi2ival8dl2";
+    rev = "689c7753f50353dd05606ed79c51cd5a94d3922a";
+    sha256 = "076020a9gjv8ldj5ckm43sbzq9s6c5xj6lpd8v28ybpiama3m6b4";
   };
   isLibrary = true;
   isExecutable = true;
@@ -100,18 +113,29 @@ mkDerivation (rec {
       sed -i -e 's@ \(a\|b\)/boot/[^/]\+@ \1@g' $patch
     done
   '';
+  # We build with --quick so we can build stage 2 packages separately.
+  # This is necessary due to: https://github.com/haskell/cabal/commit/af19fb2c2d231d8deff1cb24164a2bf7efb8905a
+  # Cabal otherwise fails to build: http://hydra.nixos.org/build/31824079/nixlog/1/raw
   postInstall = ''
-    PATH=$out/bin:$PATH LD_LIBRARY_PATH=${gmp}/lib:${stdenv.cc}/lib64:$LD_LIBRARY_PATH \
+    PATH=$out/bin:$PATH LD_LIBRARY_PATH=${gmp.out}/lib:${stdenv.cc}/lib64:$LD_LIBRARY_PATH \
       env -u GHC_PACKAGE_PATH $out/bin/ghcjs-boot \
         --dev \
+        --quick \
         --with-cabal ${cabal-install}/bin/cabal \
-        --with-gmp-includes ${gmp}/include \
-        --with-gmp-libraries ${gmp}/lib
+        --with-gmp-includes ${gmp.dev}/include \
+        --with-gmp-libraries ${gmp.out}/lib
   '';
-  passthru = {
+  passthru = let
+    ghcjsNodePkgs = pkgs.nodePackages.override {
+      generated = ./node-packages-generated.nix;
+      self = ghcjsNodePkgs;
+    };
+  in {
+    inherit bootPkgs;
+    isCross = true;
     isGhcjs = true;
-    nativeGhc = ghc;
-    inherit nodejs;
+    inherit nodejs ghcjsBoot;
+    inherit (ghcjsNodePkgs) "socket.io";
   };
 
   homepage = "https://github.com/ghcjs/ghcjs";

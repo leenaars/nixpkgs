@@ -8,11 +8,15 @@ stdenv.mkDerivation rec {
     sha256 = "1pijy6zn8kdx9m6wrckid24vkgp250hklbpmgrpixiam6l889jbq";
   };
 
-  configurePhase = "cd quazip && qmake quazip.pro";
+  configurePhase = ''
+    runHook preConfigure
+    cd quazip && qmake quazip.pro
+    runHook postConfigure
+  '';
 
   installFlags = "INSTALL_ROOT=$(out)";
 
-  buildInputs = [ zlib (qt.base or qt) ];
+  buildInputs = [ zlib qt ];
 
   meta = {
     description = "Provides access to ZIP archives from Qt programs";

@@ -1,6 +1,7 @@
 { stdenv, fetchFromGitHub, makeWrapper
 , go, sqlite, iproute, bridge-utils, devicemapper
-, btrfsProgs, iptables, e2fsprogs, xz, utillinux
+, btrfs-progs, iptables, e2fsprogs, xz, utillinux
+, systemd, pkgconfig
 , enableLxc ? false, lxc
 }:
 
@@ -10,26 +11,30 @@ with stdenv.lib;
 
 stdenv.mkDerivation rec {
   name = "docker-${version}";
-  version = "1.9.0";
+  version = "1.10.3";
 
   src = fetchFromGitHub {
     owner = "docker";
     repo = "docker";
     rev = "v${version}";
-    sha256 = "1a1ss210i712fs9mp5hcljb8bdx93lss91sxj9zay0vrmdb84zn2";
+    sha256 = "0bmrafi0p3fm681y165ps97jki0a8ihl9f0bmpvi22nmc1v0sv6l";
   };
 
   buildInputs = [
-    makeWrapper go sqlite iproute bridge-utils devicemapper btrfsProgs
-    iptables e2fsprogs
+    makeWrapper go sqlite iproute bridge-utils devicemapper btrfs-progs
+    iptables e2fsprogs systemd pkgconfig stdenv.glibc stdenv.glibc.static
   ];
 
   dontStrip = true;
 
+  DOCKER_BUILDTAGS = [ "journald" ]
+    ++ optional (btrfs-progs == null) "exclude_graphdriver_btrfs"
+    ++ optional (devicemapper == null) "exclude_graphdriver_devicemapper";
+
   buildPhase = ''
     patchShebangs .
     export AUTO_GOPATH=1
-    export DOCKER_GITCOMMIT="76d6bc9a"
+    export DOCKER_GITCOMMIT="a34a1d59"
     ./hack/make.sh dynbinary
   '';
 
@@ -37,7 +42,7 @@ stdenv.mkDerivation rec {
     install -Dm755 ./bundles/${version}/dynbinary/docker-${version} $out/libexec/docker/docker
     install -Dm755 ./bundles/${version}/dynbinary/dockerinit-${version} $out/libexec/docker/dockerinit
     makeWrapper $out/libexec/docker/docker $out/bin/docker \
-      --prefix PATH : "${iproute}/sbin:sbin:${iptables}/sbin:${e2fsprogs}/sbin:${xz}/bin:${utillinux}/bin:${optionalString enableLxc "${lxc}/bin"}"
+      --prefix PATH : "${iproute}/sbin:sbin:${iptables}/sbin:${e2fsprogs}/sbin:${xz.bin}/bin:${utillinux}/bin:${optionalString enableLxc "${lxc}/bin"}"
 
     # systemd
     install -Dm644 ./contrib/init/systemd/docker.service $out/etc/systemd/system/docker.service

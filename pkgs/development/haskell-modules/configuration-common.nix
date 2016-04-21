@@ -5,14 +5,14 @@ with import ./lib.nix { inherit pkgs; };
 self: super: {
 
   # Some packages need a non-core version of Cabal.
-  Cabal_1_18_1_6 = dontCheck super.Cabal_1_18_1_6;
-  Cabal_1_20_0_3 = dontCheck super.Cabal_1_20_0_3;
+  Cabal_1_18_1_7 = dontCheck super.Cabal_1_18_1_7;
+  Cabal_1_20_0_4 = dontCheck super.Cabal_1_20_0_4;
   Cabal_1_22_4_0 = dontCheck super.Cabal_1_22_4_0;
   cabal-install = (dontCheck super.cabal-install).overrideScope (self: super: { Cabal = self.Cabal_1_22_4_0; });
-  cabal-install_1_18_1_0 = (dontCheck super.cabal-install_1_18_1_0).overrideScope (self: super: { Cabal = self.Cabal_1_18_1_6; });
+  cabal-install_1_18_1_0 = (dontCheck super.cabal-install_1_18_1_0).overrideScope (self: super: { Cabal = self.Cabal_1_18_1_7; });
 
   # Link statically to avoid runtime dependency on GHC.
-  jailbreak-cabal = (disableSharedExecutables super.jailbreak-cabal).override { Cabal = dontJailbreak self.Cabal_1_20_0_3; };
+  jailbreak-cabal = (disableSharedExecutables super.jailbreak-cabal).override { Cabal = dontJailbreak self.Cabal_1_20_0_4; };
 
   # Apply NixOS-specific patches.
   ghc-paths = appendPatch super.ghc-paths ./patches/ghc-paths-nix.patch;
@@ -21,37 +21,28 @@ self: super: {
   clock = dontCheck super.clock;
   Dust-crypto = dontCheck super.Dust-crypto;
   hasql-postgres = dontCheck super.hasql-postgres;
-  hspec_2_1_10 = super.hspec_2_1_10.override { stringbuilder = dontCheck super.stringbuilder; };
   hspec_2_1_2 = super.hspec_2_1_2.override { stringbuilder = dontCheck super.stringbuilder; };
   hspec_2_1_3 = super.hspec_2_1_3.override { stringbuilder = dontCheck super.stringbuilder; };
   hspec_2_1_4 = super.hspec_2_1_4.override { stringbuilder = dontCheck super.stringbuilder; };
   hspec_2_1_5 = super.hspec_2_1_5.override { stringbuilder = dontCheck super.stringbuilder; };
   hspec_2_1_6 = super.hspec_2_1_6.override { stringbuilder = dontCheck super.stringbuilder; };
   hspec_2_1_7 = super.hspec_2_1_7.override { stringbuilder = dontCheck super.stringbuilder; };
+  hspec_2_1_10 = super.hspec_2_1_10.override { stringbuilder = dontCheck super.stringbuilder; };
+  hspec_2_2_1 = super.hspec_2_2_1.override { stringbuilder = dontCheck super.stringbuilder; };
+  hspec_2_2_2 = super.hspec_2_2_2.override { stringbuilder = dontCheck super.stringbuilder; };
   hspec-expectations_0_6_1_1 = dontCheck super.hspec-expectations_0_6_1_1;
   hspec-expectations_0_6_1 = dontCheck super.hspec-expectations_0_6_1;
   hspec-expectations_0_7_1 = dontCheck super.hspec-expectations_0_7_1;
   hspec-expectations = dontCheck super.hspec-expectations;
   hspec = super.hspec.override { stringbuilder = dontCheck super.stringbuilder; };
   HTTP = dontCheck super.HTTP;
-  mwc-random_0_13_2_2 = dontCheck super.mwc-random_0_13_2_2;
-  mwc-random_0_13_3_0 = dontCheck super.mwc-random_0_13_3_0;
-  mwc-random = dontCheck super.mwc-random;
   nanospec_0_2_0 = dontCheck super.nanospec_0_2_0;
   nanospec = dontCheck super.nanospec;
   options_1_2_1 = dontCheck super.options_1_2_1;
   options_1_2 = dontCheck super.options_1_2;
   options = dontCheck super.options;
   statistics = dontCheck super.statistics;
-  text_1_1_1_3 = dontCheck super.text_1_1_1_3;
-  text_1_2_0_3 = dontCheck super.text_1_2_0_3;
-  text_1_2_0_4 = dontCheck super.text_1_2_0_4;
-  text_1_2_0_6 = dontCheck super.text_1_2_0_6;
-  text = dontCheck super.text;
   c2hs = if pkgs.stdenv.isDarwin then dontCheck super.c2hs else super.c2hs;
-
-  # The package doesn't compile with ruby 1.9, which is our default at the moment.
-  hruby = super.hruby.override { ruby = pkgs.ruby_2_1; };
 
   # Use the default version of mysql to build this package (which is actually mariadb).
   mysql = super.mysql.override { mysql = pkgs.mysql.lib; };
@@ -138,9 +129,6 @@ self: super: {
   # Foreign dependency name clashes with another Haskell package.
   libarchive-conduit = super.libarchive-conduit.override { archive = pkgs.libarchive; };
 
-  # https://github.com/haskell/time/issues/23
-  time_1_5_0_1 = dontCheck super.time_1_5_0_1;
-
   # Switch levmar build to openblas.
   bindings-levmar = overrideCabal super.bindings-levmar (drv: {
     preConfigure = ''
@@ -166,7 +154,6 @@ self: super: {
   gl = dontHaddock super.gl;
   groupoids = dontHaddock super.groupoids;
   hamlet = dontHaddock super.hamlet;
-  haste-compiler = dontHaddock super.haste-compiler;
   HaXml = dontHaddock super.HaXml;
   HDBC-odbc = dontHaddock super.HDBC-odbc;
   hoodle-core = dontHaddock super.hoodle-core;
@@ -188,11 +175,8 @@ self: super: {
   wai-test = dontHaddock super.wai-test;
   zlib-conduit = dontHaddock super.zlib-conduit;
 
-  # Jailbreak doesn't get the job done because the Cabal file uses conditionals a lot.
-  darcs = (overrideCabal super.darcs (drv: {
-    doCheck = false;            # The test suite won't even start.
-    postPatch = "sed -i -e 's|attoparsec .*,|attoparsec,|' -e 's|vector .*,|vector,|' darcs.cabal";
-  }));
+  # The test suite won't even start.
+  darcs = dontCheck super.darcs;
 
   # https://github.com/massysett/rainbox/issues/1
   rainbox = dontCheck super.rainbox;
@@ -236,8 +220,8 @@ self: super: {
     else super.x509-system;
 
   double-conversion = if !pkgs.stdenv.isDarwin
-    then super.double-conversion
-    else addBuildDepend (overrideCabal super.double-conversion (drv:
+    then addExtraLibrary super.double-conversion pkgs.stdenv.cc.cc.lib
+    else addExtraLibrary (overrideCabal super.double-conversion (drv:
       {
         postPatch = ''
           substituteInPlace double-conversion.cabal --replace stdc++ c++
@@ -255,6 +239,7 @@ self: super: {
   glib = addPkgconfigDepend super.glib pkgs.glib;
   gtk3 = super.gtk3.override { inherit (pkgs) gtk3; };
   gtk = addPkgconfigDepend super.gtk pkgs.gtk;
+  gtksourceview2 = (addPkgconfigDepend super.gtksourceview2 pkgs.gtk2).override { inherit (pkgs.gnome2) gtksourceview; };
   gtksourceview3 = super.gtksourceview3.override { inherit (pkgs.gnome3) gtksourceview; };
 
   # Need WebkitGTK, not just webkit.
@@ -335,7 +320,7 @@ self: super: {
   github-types = dontCheck super.github-types;          # http://hydra.cryp.to/build/1114046/nixlog/1/raw
   hadoop-rpc = dontCheck super.hadoop-rpc;              # http://hydra.cryp.to/build/527461/nixlog/2/raw
   hasql = dontCheck super.hasql;                        # http://hydra.cryp.to/build/502489/nixlog/4/raw
-  hjsonschema = overrideCabal super.hjsonschema (drv: { testTarget = "local"; });
+  hjsonschema = overrideCabal (super.hjsonschema.override { hjsonpointer = self.hjsonpointer_0_2_0_4; }) (drv: { testTarget = "local"; });
   hoogle = overrideCabal super.hoogle (drv: { testTarget = "--test-option=--no-net"; });
   marmalade-upload = dontCheck super.marmalade-upload;  # http://hydra.cryp.to/build/501904/nixlog/1/raw
   network-transport-tcp = dontCheck super.network-transport-tcp;
@@ -375,7 +360,6 @@ self: super: {
   aws = dontCheck super.aws;                            # needs aws credentials
   aws-kinesis = dontCheck super.aws-kinesis;            # needs aws credentials for testing
   binary-protocol = dontCheck super.binary-protocol;    # http://hydra.cryp.to/build/499749/log/raw
-  bindings-GLFW = dontCheck super.bindings-GLFW;        # requires an active X11 display
   bits = dontCheck super.bits;                          # http://hydra.cryp.to/build/500239/log/raw
   bloodhound = dontCheck super.bloodhound;
   buildwrapper = dontCheck super.buildwrapper;
@@ -445,6 +429,7 @@ self: super: {
   itanium-abi = dontCheck super.itanium-abi;
   katt = dontCheck super.katt;
   language-slice = dontCheck super.language-slice;
+  ldap-client = dontCheck super.ldap-client;
   lensref = dontCheck super.lensref;
   liquidhaskell = dontCheck super.liquidhaskell;
   lucid = dontCheck super.lucid; #https://github.com/chrisdone/lucid/issues/25
@@ -614,14 +599,8 @@ self: super: {
   # https://github.com/junjihashimoto/test-sandbox-compose/issues/2
   test-sandbox-compose = dontCheck super.test-sandbox-compose;
 
-  # https://github.com/jgm/pandoc/issues/2190
-  pandoc = overrideCabal super.pandoc (drv: {
-    enableSharedExecutables = false;
-    postInstall = ''            # install man pages
-      mv man $out/
-      find $out/man -type f ! -name "*.[0-9]" -exec rm {} +
-    '';
-  });
+  # https://github.com/jgm/pandoc/issues/2709
+  pandoc = disableSharedExecutables super.pandoc;
 
   # Tests attempt to use NPM to install from the network into
   # /homeless-shelter. Disabled.
@@ -635,14 +614,6 @@ self: super: {
 
   # https://github.com/haskell/haddock/issues/378
   haddock-library = dontCheck super.haddock-library;
-
-  # Already fixed in upstream darcs repo.
-  xmonad-contrib = overrideCabal super.xmonad-contrib (drv: {
-    postPatch = ''
-      sed -i -e '24iimport Control.Applicative' XMonad/Util/Invisible.hs
-      sed -i -e '22iimport Control.Applicative' XMonad/Hooks/DebugEvents.hs
-    '';
-  });
 
   # https://github.com/anton-k/csound-expression-dynamic/issues/1
   csound-expression-dynamic = dontHaddock super.csound-expression-dynamic;
@@ -665,7 +636,19 @@ self: super: {
   spaceprobe = addBuildTool super.spaceprobe self.llvmPackages.llvm;
 
   # Tries to run GUI in tests
-  leksah = dontCheck super.leksah;
+  leksah = dontCheck (overrideCabal super.leksah (drv: {
+    executableSystemDepends = (drv.executableSystemDepends or []) ++ (with pkgs; [
+      gnome3.defaultIconTheme # Fix error: Icon 'window-close' not present in theme ...
+      wrapGAppsHook           # Fix error: GLib-GIO-ERROR **: No GSettings schemas are installed on the system
+      gtk3                    # Fix error: GLib-GIO-ERROR **: Settings schema 'org.gtk.Settings.FileChooser' is not installed
+    ]);
+    postPatch = (drv.postPatch or "") + ''
+      for f in src/IDE/Leksah.hs src/IDE/Utils/ServerConnection.hs
+      do
+        substituteInPlace "$f" --replace "\"leksah-server\"" "\"${self.leksah-server}/bin/leksah-server\""
+      done
+    '';
+  }));
 
   # Patch to consider NIX_GHC just like xmonad does
   dyre = appendPatch super.dyre ./patches/dyre-nix.patch;
@@ -782,9 +765,6 @@ self: super: {
   elm-server = markBroken super.elm-server;
   elm-yesod = markBroken super.elm-yesod;
 
-  # https://github.com/GaloisInc/HaNS/pull/8
-  hans = appendPatch super.hans ./patches/hans-disable-webserver.patch;
-
   # https://github.com/athanclark/sets/issues/2
   sets = dontCheck super.sets;
 
@@ -849,6 +829,9 @@ self: super: {
   configurator = dontCheck super.configurator;
 
   # The cabal files for these libraries do not list the required system dependencies.
+  miniball = overrideCabal super.miniball (drv: {
+    librarySystemDepends = [ pkgs.miniball ];
+  });
   SDL-image = overrideCabal super.SDL-image (drv: {
     librarySystemDepends = [ pkgs.SDL pkgs.SDL_image ] ++ drv.librarySystemDepends or [];
   });
@@ -933,6 +916,10 @@ self: super: {
   # https://github.com/sol/hpack/issues/53
   hpack = dontCheck super.hpack;
 
+  # Tests require `docker` command in PATH
+  # Tests require running docker service :on localhost
+  docker = dontCheck super.docker;
+
   # https://github.com/deech/fltkhs/issues/16
   fltkhs = overrideCabal super.fltkhs (drv: {
     libraryToolDepends = (drv.libraryToolDepends or []) ++ [pkgs.autoconf];
@@ -949,7 +936,84 @@ self: super: {
   # https://github.com/mainland/language-c-quote/issues/57
   language-c-quote = super.language-c-quote.override { alex = self.alex_3_1_4; };
 
-  # The package doesn't yet compile with new HSE: https://github.com/bmillwood/pointfree/pull/13
-  pointfree = super.pointfree.override { haskell-src-exts = self.haskell-src-exts_1_16_0_1; };
+  # https://github.com/agda/agda/issues/1840
+  Agda_2_4_2_3 = super.Agda_2_4_2_3.override {
+    unordered-containers = self.unordered-containers_0_2_5_1;
+    cpphs = self.cpphs_1_19_3;
+  };
+  Agda_2_4_2_4 = super.Agda_2_4_2_4.override {
+    unordered-containers = self.unordered-containers_0_2_5_1;
+    cpphs = self.cpphs_1_19_3;
+  };
+  Agda = super.Agda.override {
+    unordered-containers = self.unordered-containers_0_2_5_1;
+    cpphs = self.cpphs_1_19_3;
+  };
 
+  # We get lots of strange compiler errors during the test suite run.
+  jsaddle = dontCheck super.jsaddle;
+
+  # https://github.com/gwern/mueval/issues/14
+  mueval = super.mueval.override { hint = self.hint_0_4_3; };
+
+  # Looks like Avahi provides the missing library
+  dnssd = super.dnssd.override { dns_sd = pkgs.avahi.override { withLibdnssdCompat = true; }; };
+
+  # https://github.com/danidiaz/pipes-transduce/issues/2
+  pipes-transduce = super.pipes-transduce.override { foldl = self.foldl_1_1_6; };
+
+  # Haste stuff
+  haste-Cabal         = self.callPackage ../tools/haskell/haste/haste-Cabal.nix {};
+  haste-cabal-install = self.callPackage ../tools/haskell/haste/haste-cabal-install.nix { Cabal = self.haste-Cabal; HTTP = self.HTTP_4000_2_23; };
+  haste-compiler      = self.callPackage ../tools/haskell/haste/haste-compiler.nix { inherit overrideCabal; super-haste-compiler = super.haste-compiler; };
+
+  # Ensure the necessary frameworks are propagatedBuildInputs on darwin
+  OpenGLRaw = overrideCabal super.OpenGLRaw (drv: {
+    librarySystemDepends =
+      pkgs.lib.optionals (!pkgs.stdenv.isDarwin) drv.librarySystemDepends;
+    libraryHaskellDepends = drv.libraryHaskellDepends
+      ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
+                            [ pkgs.darwin.apple_sdk.frameworks.OpenGL ];
+    preConfigure = pkgs.lib.optionalString pkgs.stdenv.isDarwin ''
+      frameworkPaths=($(for i in $nativeBuildInputs; do if [ -d "$i"/Library/Frameworks ]; then echo "-F$i/Library/Frameworks"; fi done))
+      frameworkPaths=$(IFS=, ; echo "''${frameworkPaths[@]}")
+      configureFlags+=$(if [ -n "$frameworkPaths" ]; then echo -n "--ghc-options=-optl=$frameworkPaths"; fi)
+    '';
+  });
+  GLURaw = overrideCabal super.GLURaw (drv: {
+    librarySystemDepends =
+      pkgs.lib.optionals (!pkgs.stdenv.isDarwin) drv.librarySystemDepends;
+    libraryHaskellDepends = drv.libraryHaskellDepends
+      ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
+                            [ pkgs.darwin.apple_sdk.frameworks.OpenGL ];
+  });
+  bindings-GLFW = overrideCabal super.bindings-GLFW (drv: {
+    doCheck = false; # requires an active X11 display
+    librarySystemDepends =
+      pkgs.lib.optionals (!pkgs.stdenv.isDarwin) drv.librarySystemDepends;
+    libraryHaskellDepends = drv.libraryHaskellDepends
+      ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
+                            (with pkgs.darwin.apple_sdk.frameworks;
+                             [ AGL Cocoa OpenGL IOKit Kernel CoreVideo
+                               pkgs.darwin.CF ]);
+  });
+  OpenCL = overrideCabal super.OpenCL (drv: {
+    librarySystemDepends =
+      pkgs.lib.optionals (!pkgs.stdenv.isDarwin) drv.librarySystemDepends;
+    libraryHaskellDepends = drv.libraryHaskellDepends
+      ++ pkgs.lib.optionals pkgs.stdenv.isDarwin
+                            [ pkgs.darwin.apple_sdk.frameworks.OpenCL ];
+  });
+
+  # Tests must be disabled on darwin for all versions of c2hs
+  # (e.g. Stackage LTS releases).
+  c2hs_0_20_1 = if pkgs.stdenv.isDarwin
+                then dontCheck super.c2hs_0_20_1
+                else super.c2hs_0_20_1;
+  c2hs_0_25_2 = if pkgs.stdenv.isDarwin
+                then dontCheck super.c2hs_0_25_2
+                else super.c2hs_0_25_2;
+  c2hs_0_27_1 = if pkgs.stdenv.isDarwin
+                then dontCheck super.c2hs_0_27_1
+                else super.c2hs_0_27_1;
 }

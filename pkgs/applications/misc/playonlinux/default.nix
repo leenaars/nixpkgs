@@ -17,6 +17,8 @@
 , xterm
 , pkgs
 , pkgsi686Linux
+, which
+, curl
 }:
 
 assert stdenv.isLinux;
@@ -24,7 +26,7 @@ assert stdenv.isLinux;
 let
   version = "4.2.9";
 
-  binpath = stdenv.lib.makeSearchPath "bin"
+  binpath = stdenv.lib.makeBinPath
     [ cabextract
       python2Packages.python
       gettext
@@ -39,6 +41,8 @@ let
       wine
       xdg-user-dirs
       xterm
+      which
+      curl
     ];
 
   ld32 =

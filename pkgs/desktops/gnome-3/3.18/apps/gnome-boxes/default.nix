@@ -2,8 +2,8 @@
 , glib, gobjectIntrospection, libxml2, gtk3, gtkvnc, libvirt, spice_gtk
 , spice_protocol, libuuid, libsoup, libosinfo, systemd, tracker, vala
 , libcap_ng, libcap, yajl, gmp, gdbm, cyrus_sasl, gnome3, librsvg
-, desktop_file_utils, mtools, cdrkit, libcdio
-, libusb, libarchive, acl
+, desktop_file_utils, mtools, cdrkit, libcdio, numactl, xen
+, libusb, libarchive, acl, libgudev, qemu
 }:
 
 # TODO: ovirt (optional)
@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
     gobjectIntrospection libxml2 gtk3 gtkvnc libvirt spice_gtk spice_protocol
     libuuid libsoup libosinfo systemd tracker vala libcap_ng libcap yajl gmp
     gdbm cyrus_sasl gnome3.defaultIconTheme libusb libarchive
-    librsvg desktop_file_utils acl
+    librsvg desktop_file_utils acl libgudev numactl xen
   ];
 
   preFixup = ''
@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
         wrapProgram "$prog" \
             --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
             --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH" \
-            --prefix PATH : "${mtools}/bin:${cdrkit}/bin:${libcdio}/bin"
+            --prefix PATH : "${mtools}/bin:${cdrkit}/bin:${libcdio}/bin:${qemu}/bin"
     done
   '';
 

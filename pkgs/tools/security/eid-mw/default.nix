@@ -1,12 +1,12 @@
 { stdenv, fetchFromGitHub, autoreconfHook, gtk3, nssTools, pcsclite
 , pkgconfig }:
 
-let version = "4.1.9"; in
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "eid-mw-${version}";
+  version = "4.1.14";
 
   src = fetchFromGitHub {
-    sha256 = "03hf3bkawhr4kpjcv71xhja3d947qvxmjf0lkyjmv7i3fw3j8jqs";
+    sha256 = "1gj08dylcwdfjmdci1ja853n9xqkhgxy0x8m30bks81qwbnd12lp";
     rev = "v${version}";
     repo = "eid-mw";
     owner = "Fedict";
@@ -35,7 +35,6 @@ stdenv.mkDerivation {
   '';
 
   meta = with stdenv.lib; {
-    inherit version;
     description = "Belgian electronic identity card (eID) middleware";
     homepage = http://eid.belgium.be/en/using_your_eid/installing_the_eid_software/linux/;
     license = licenses.lgpl3;

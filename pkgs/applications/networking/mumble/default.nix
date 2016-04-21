@@ -40,7 +40,9 @@ let
       ++ (overrides.configureFlags or [ ]);
 
     configurePhase = ''
+      runHook preConfigure
       qmake $configureFlags DEFINES+="PLUGIN_PATH=$out/lib"
+      runHook postConfigure
     '';
 
     makeFlags = [ "release" ];
@@ -53,6 +55,8 @@ let
       mkdir -p $out/share/man/man1
       cp man/mum* $out/share/man/man1
     '' + (overrides.installPhase or "");
+
+    enableParallelBuilding = true;
 
     meta = {
       description = "Low-latency, high quality voice chat software";
@@ -95,7 +99,7 @@ let
     type = "murmur";
 
     postPatch = optional iceSupport ''
-      sed -i 's,/usr/share/Ice/,${zeroc_ice}/,g' src/murmur/murmur.pro
+      grep -Rl '/usr/share/Ice' . | xargs sed -i 's,/usr/share/Ice/,${zeroc_ice}/,g'
     '';
 
     configureFlags = [

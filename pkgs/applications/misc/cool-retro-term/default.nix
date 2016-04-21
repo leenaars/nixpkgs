@@ -1,4 +1,5 @@
-{ stdenv, fetchgit, makeQtWrapper, qtbase, qtquick1, qmltermwidget }:
+{ stdenv, fetchgit, makeQtWrapper, qtbase, qtquick1, qmltermwidget,
+qtquickcontrols, qtgraphicaleffects }:
 
 stdenv.mkDerivation rec {
   version = "1.0.0";
@@ -15,10 +16,14 @@ stdenv.mkDerivation rec {
     sed -i -e '/qmltermwidget/d' cool-retro-term.pro
   '';
 
-  buildInputs = [ qtbase qtquick1 qmltermwidget ];
+  buildInputs = [ qtbase qtquick1 qmltermwidget qtquickcontrols qtgraphicaleffects ];
   nativeBuildInputs = [ makeQtWrapper ];
 
-  configurePhase = "qmake PREFIX=$out";
+  configurePhase = ''
+    runHook preConfigure
+    qmake PREFIX=$out
+    runHook postConfigure
+  '';
 
   installPhase = "make -j $NIX_BUILD_CORES INSTALL_ROOT=$out install";
 

@@ -1,30 +1,30 @@
-{ stdenv, fetchurl, buildEnv, makeDesktopItem, makeWrapper, zlib, glib, alsaLib
+{ stdenv, fetchurl, lib, makeDesktopItem, makeWrapper, zlib, glib, alsaLib
 , dbus, gtk, atk, pango, freetype, fontconfig, libgnome_keyring3, gdk_pixbuf
 , gvfs, cairo, cups, expat, libgpgerror, nspr, gconf, nss, xorg, libcap, systemd
 }:
 
 let
-  atomEnv = buildEnv {
-    name = "env-atom";
-    paths = [
-      stdenv.cc.cc zlib glib dbus gtk atk pango freetype libgnome_keyring3
-      fontconfig gdk_pixbuf cairo cups expat libgpgerror alsaLib nspr gconf nss
-      xorg.libXrender xorg.libX11 xorg.libXext xorg.libXdamage xorg.libXtst
-      xorg.libXcomposite xorg.libXi xorg.libXfixes xorg.libXrandr
-      xorg.libXcursor libcap systemd
-    ];
-  };
+  atomPkgs = [
+    stdenv.cc.cc zlib glib dbus gtk atk pango freetype libgnome_keyring3
+    fontconfig gdk_pixbuf cairo cups expat libgpgerror alsaLib nspr gconf nss
+    xorg.libXrender xorg.libX11 xorg.libXext xorg.libXdamage xorg.libXtst
+    xorg.libXcomposite xorg.libXi xorg.libXfixes xorg.libXrandr
+    xorg.libXcursor libcap systemd
+  ];
+  atomLib = lib.makeLibraryPath atomPkgs;
+  atomLib64 = lib.makeSearchPathOutputs "lib64" ["lib"] atomPkgs;
+
 in stdenv.mkDerivation rec {
   name = "atom-${version}";
-  version = "1.3.1";
+  version = "1.6.2";
 
   src = fetchurl {
     url = "https://github.com/atom/atom/releases/download/v${version}/atom-amd64.deb";
-    sha256 = "17q5vrvjsyxcd8favp0sldfvhcwr0ba6ws32df6iv2iyla5h94y1";
+    sha256 = "1kl2pc0smacn4lgk5wwlaiw03rm8b0763vaisgp843p35zzsbc9n";
     name = "${name}.deb";
   };
 
-  buildInputs = [ atomEnv gvfs makeWrapper ];
+  nativeBuildInputs = [ makeWrapper ];
 
   phases = [ "installPhase" "fixupPhase" ];
 
@@ -41,17 +41,17 @@ in stdenv.mkDerivation rec {
     patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
       $out/share/atom/resources/app/apm/bin/node
     wrapProgram $out/bin/atom \
-      --prefix "LD_LIBRARY_PATH" : "${atomEnv}/lib:${atomEnv}/lib64" \
+      --prefix "LD_LIBRARY_PATH" : "${atomLib}:${atomLib64}" \
       --prefix "PATH" : "${gvfs}/bin"
     wrapProgram $out/bin/apm \
-      --prefix "LD_LIBRARY_PATH" : "${atomEnv}/lib:${atomEnv}/lib64"
+      --prefix "LD_LIBRARY_PATH" : "${atomLib}:${atomLib64}"
   '';
 
   meta = with stdenv.lib; {
     description = "A hackable text editor for the 21st Century";
     homepage = https://atom.io/;
     license = licenses.mit;
-    maintainers = [ maintainers.offline ];
+    maintainers = [ maintainers.offline maintainers.nequissimus ];
     platforms = [ "x86_64-linux" ];
   };
 }

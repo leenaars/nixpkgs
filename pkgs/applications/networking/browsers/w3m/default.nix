@@ -1,9 +1,10 @@
-{ stdenv, fetchurl
+{ stdenv, fetchgit, fetchpatch
 , ncurses, boehmgc, gettext, zlib
 , sslSupport ? true, openssl ? null
 , graphicsSupport ? true, imlib2 ? null
 , x11Support ? graphicsSupport, libX11 ? null
 , mouseSupport ? !stdenv.isDarwin, gpm-ncurses ? null
+, perl, man, pkgconfig
 }:
 
 assert sslSupport -> openssl != null;
@@ -14,28 +15,40 @@ assert mouseSupport -> gpm-ncurses != null;
 with stdenv.lib;
 
 stdenv.mkDerivation rec {
-  name = "w3m-0.5.3";
+  name = "w3m-0.5.3-2015-12-20";
 
-  src = fetchurl {
-    url = "mirror://sourceforge/w3m/${name}.tar.gz";
-    sha256 = "1qx9f0kprf92r1wxl3sacykla0g04qsi0idypzz24b7xy9ix5579";
+  src = fetchgit {
+    url = "git://anonscm.debian.org/collab-maint/w3m.git";
+    rev = "e0b6e022810271bd0efcd655006389ee3879e94d";
+    sha256 = "1vahm3719hb0m20nc8k88165z35f8b15qasa0whhk78r12bls1q6";
   };
 
-  NIX_LDFLAGS = stdenv.lib.optionalString stdenv.isSunOS "-lsocket -lnsl";
+  NIX_LDFLAGS = optionalString stdenv.isSunOS "-lsocket -lnsl";
 
-  patches = [ ./glibc214.patch ]
-    # Patch for the newer unstable boehm-gc 7.2alpha. Not all platforms use that
-    # alpha. At the time of writing this, boehm-gc-7.1 is the last stable.
-    ++ optional (boehmgc.name != "boehm-gc-7.1") [ ./newgc.patch ]
-    ++ optional stdenv.isCygwin ./cygwin.patch
-    # for frame buffer only version
-    ++ optional (graphicsSupport && !x11Support) [ ./no-x11.patch ];
+  # we must set these so that the generated files (e.g. w3mhelp.cgi) contain
+  # the correct paths.
+  PERL = "${perl}/bin/perl";
+  MAN = "${man}/bin/man";
 
-  buildInputs = [ncurses boehmgc gettext zlib]
+  patches = [
+    ./RAND_egd.libressl.patch
+    (fetchpatch {
+      name = "https.patch";
+      url = "https://aur.archlinux.org/cgit/aur.git/plain/https.patch?h=w3m-mouse&id=5b5f0fbb59f674575e87dd368fed834641c35f03";
+      sha256 = "08skvaha1hjyapsh8zw5dgfy433mw2hk7qy9yy9avn8rjqj7kjxk";
+    })
+  ] ++ optional (graphicsSupport && !x11Support) [ ./no-x11.patch ]
+    ++ optional stdenv.isCygwin ./cygwin.patch;
+
+  buildInputs = [ pkgconfig ncurses boehmgc gettext zlib ]
     ++ optional sslSupport openssl
     ++ optional mouseSupport gpm-ncurses
     ++ optional graphicsSupport imlib2
     ++ optional x11Support libX11;
+
+  postInstall = optionalString graphicsSupport ''
+    ln -s $out/libexec/w3m/w3mimgdisplay $out/bin
+  '';
 
   configureFlags = "--with-ssl=${openssl} --with-gc=${boehmgc}"
     + optionalString graphicsSupport " --enable-image=${optionalString x11Support "x11,"}fb";
@@ -48,11 +61,12 @@ stdenv.mkDerivation rec {
   enableParallelBuilding = false;
 
   # for w3mimgdisplay
+  # see: https://bbs.archlinux.org/viewtopic.php?id=196093
   LIBS = optionalString x11Support "-lX11";
 
   meta = {
     homepage = http://w3m.sourceforge.net/;
     description = "A text-mode web browser";
-    maintainers = [ maintainers.mornfall ];
+    maintainers = [ maintainers.mornfall maintainers.cstrahan ];
   };
 }

@@ -6,15 +6,15 @@
 # for dependencies see http://www.yorba.org/projects/shotwell/install/
 
 stdenv.mkDerivation rec {
-  version = "0.20.2";
+  version = "0.22.0";
   name = "shotwell-${version}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/shotwell/0.20/${name}.tar.xz";
-    sha256 = "0h5pdczsrkplvlvq54zk3am4kjmfpd6pn2sz0ky8lfq1fngwiqip";
+    url = "mirror://gnome/sources/shotwell/0.22/${name}.tar.xz";
+    sha256 = "0cgqaaikrb10plhf6zxbgqy32zqpiwyi9dpx3g8yr261q72r5c81";
   };
 
-  NIX_CFLAGS_COMPILE = "-I${glib}/include/glib-2.0 -I${glib}/lib/glib-2.0/include";
+  NIX_CFLAGS_COMPILE = "-I${glib}/include/glib-2.0 -I${glib.out}/lib/glib-2.0/include";
 
   configureFlags = [ "--disable-gsettings-convert-install" ];
 
@@ -30,7 +30,7 @@ stdenv.mkDerivation rec {
   preFixup = ''
     wrapProgram "$out/bin/shotwell" \
      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-     --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gtk3}/share:$out/share:$GSETTINGS_SCHEMAS_PATH" \
+     --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gtk3.out}/share:$out/share:$GSETTINGS_SCHEMAS_PATH" \
      --prefix GIO_EXTRA_MODULES : "${gnome3.dconf}/lib/gio/modules"
   '';
 
@@ -44,7 +44,7 @@ stdenv.mkDerivation rec {
 
   meta = with stdenv.lib; {
     description = "Popular photo organizer for the GNOME desktop";
-    homepage = http://www.yorba.org/projects/shotwell/;
+    homepage = https://wiki.gnome.org/Apps/Shotwell;
     license = licenses.lgpl21Plus;
     maintainers = with maintainers; [iElectric];
     platforms = platforms.linux;

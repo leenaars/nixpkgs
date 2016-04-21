@@ -1,6 +1,6 @@
 { stdenv, fetchurl, gettext, libidn, pkgconfig
 , perl, perlPackages, LWP, python3
-, libiconv, libpsl, openssl ? null }:
+, libiconv, libpsl ? null, openssl ? null }:
 
 stdenv.mkDerivation rec {
   name = "wget-1.17.1";
@@ -9,6 +9,8 @@ stdenv.mkDerivation rec {
     url = "mirror://gnu/wget/${name}.tar.xz";
     sha256 = "1jcpvl5sxb2ag8yahpy370c5jlfb097a21k2mhsidh4wxdhrnmgy";
   };
+
+  patches = [ ./remove-runtime-dep-on-openssl-headers.patch ];
 
   preConfigure = ''
     for i in "doc/texi2pod.pl" "util/rmold.pl"; do

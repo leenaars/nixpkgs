@@ -1,42 +1,47 @@
-pkgs: with pkgs;
+/*
 
-let
+# Updating
 
-  inherit (stdenv.lib) makeScope mapAttrs;
+To update the list of packages from ELPA,
 
-  json = builtins.readFile ./elpa-packages.json;
-  manifest = builtins.fromJSON json;
+1. Clone https://github.com/ttuegel/emacs2nix
+2. Run `./elpa-packages.sh` from emacs2nix
+3. Copy the new elpa-packages.json file into Nixpkgs
+4. `git commit -m "elpa-packages $(date -Idate)"`
 
-  mkPackage = self: name: recipe:
-    let drv =
-          { elpaBuild, stdenv, fetchurl }:
-          let fetch = { inherit fetchurl; }."${recipe.fetch.tag}"
-                or (abort "emacs-${name}: unknown fetcher '${recipe.fetch.tag}'");
-              args = builtins.removeAttrs recipe.fetch [ "tag" ];
-              src = fetch args;
-          in elpaBuild {
-            pname = name;
-            inherit (recipe) version;
-            inherit src;
-            deps =
-              let lookupDep = d:
-                    self."${d}" or (abort "emacs-${name}: missing dependency ${d}");
-              in map lookupDep recipe.deps;
-            meta = {
-              homepage = "http://elpa.gnu.org/packages/${name}.html";
-              license = stdenv.lib.licenses.free;
-            };
-          };
-    in self.callPackage drv {};
+*/
 
-  packages = self:
-    let
-      elpaPackages = mapAttrs (mkPackage self) manifest;
+{ fetchurl, lib, stdenv, texinfo }:
 
-      elpaBuild = import ../../../build-support/emacs/melpa.nix {
-        inherit (pkgs) lib stdenv fetchurl texinfo;
-        inherit (self) emacs;
-      };
-    in elpaPackages // { inherit elpaBuild elpaPackages; };
+self:
 
-in makeScope pkgs.newScope packages
+  let
+
+    imported = import ./elpa-generated.nix {
+      inherit (self) callPackage;
+    };
+
+    super = removeAttrs imported [ "dash" ];
+
+    elpaBuild = import ../../../build-support/emacs/elpa.nix {
+      inherit fetchurl lib stdenv texinfo;
+      inherit (self) emacs;
+    };
+
+    markBroken = pkg: pkg.override {
+      elpaBuild = args: self.elpaBuild (args // {
+        meta = (args.meta or {}) // { broken = true; };
+      });
+    };
+
+    overrides = {
+      el-search = markBroken super.el-search; # requires emacs-25
+      iterators = markBroken super.iterators; # requires emacs-25
+      midi-kbd = markBroken super.midi-kbd; # requires emacs-25
+      stream = markBroken super.stream; # requires emacs-25
+      cl-lib = null; # builtin
+    };
+
+    elpaPackages = super // overrides;
+
+  in elpaPackages // { inherit elpaBuild elpaPackages; }
