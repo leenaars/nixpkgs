@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   name = "trojita-0.6";
   src = fetchgit {
     url = "git://anongit.kde.org/trojita.git";
-    rev = "8c1206a93257143c056404aaec6ec69f06e1ef6c";
-    sha256 = "17f776adajhzi4x7018wvggd6ygpkpdl714ql16bmm3bymsl6xhg";
+    rev = "17ebc1e25e88912aa84825fbc154dd79c064b420";
+    sha256 = "1m4j7n7yj31bgvz2qg685wxcb20ld464px0jdqv0g18bah4pknqm";
   };
 
   desktopItem = makeDesktopItem {
@@ -28,6 +28,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/bin
     cp trojita $out/bin
+    cp -R lib $out
 #    wrapQtProgram $out/bin/trojita
 
     mkdir -p $out/share/applications
