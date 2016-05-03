@@ -27,8 +27,9 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/bin
+    mkdir -p $out/lib
     cp trojita $out/bin
-    cp -R lib $out
+    cp -R lib* $out/lib
 #    wrapQtProgram $out/bin/trojita
 
     mkdir -p $out/share/applications
