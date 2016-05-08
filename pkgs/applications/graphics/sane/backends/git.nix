@@ -1,10 +1,10 @@
 { callPackage, fetchgit, ... } @ args:
 
 callPackage ./generic.nix (args // {
-  version = "2016-04-14";
+  version = "2016-05-07";
   src = fetchgit {
-    sha256 = "414fa7753043f8f3775d926eede01a9dbccf6255b2b2b961a3c48b4fa76a4952";
-    rev = "19c128a23e27c1ab5a030fa6ff74da1b740629bb";
+    sha256 = "5f8974bc56d5eb1d33fbe53b30e80395b690151a1ea418d8aa44c7e092656896";
+    rev = "926bfade544de4a4fd5f1a8082b85a97e2443770";
     url = "git://alioth.debian.org/git/sane/sane-backends.git";
   };
 })

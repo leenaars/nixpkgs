@@ -68,6 +68,10 @@ with lib;
     # proxy
     (mkRenamedOptionModule [ "nix" "proxy" ] [ "networking" "proxy" "default" ])
 
+    # sandboxing
+    (mkRenamedOptionModule [ "nix" "useChroot" ] [ "nix" "useSandbox" ])
+    (mkRenamedOptionModule [ "nix" "chrootDirs" ] [ "nix" "sandboxPaths" ])
+
     # KDE
     (mkRenamedOptionModule [ "kde" "extraPackages" ] [ "environment" "systemPackages" ])
     (mkRenamedOptionModule [ "environment" "kdePackages" ] [ "environment" "systemPackages" ])
@@ -119,6 +123,8 @@ with lib;
     (mkRemovedOptionModule [ "services" "printing" "cupsFilesConf" ])
     (mkRemovedOptionModule [ "services" "printing" "cupsdConf" ])
     (mkRemovedOptionModule [ "services" "xserver" "startGnuPGAgent" ])
+    (mkRemovedOptionModule [ "services" "phpfpm" "phpIni" ])
+    (mkRemovedOptionModule [ "services" "dovecot2" "package" ])
 
   ];
 }

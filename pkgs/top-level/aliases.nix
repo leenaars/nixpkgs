@@ -30,6 +30,7 @@ doNotDisplayTwice rec {
   bundler_HEAD = bundler; # added 2015-11-15
   cheetahTemplate = pythonPackages.cheetah; # 2015-06-15
   clangAnalyzer = clang-analyzer;  # added 2015-02-20
+  clawsMail = claws-mail; # added 2016-04-29
   conkerorWrapper = conkeror; # added 2015-01
   cool-old-term = cool-retro-term; # added 2015-01-31
   cupsBjnp = cups-bjnp; # added 2016-01-02
@@ -44,6 +45,7 @@ doNotDisplayTwice rec {
   firefoxWrapper = firefox;           # 2015-09
   fuse_exfat = exfat;                   # 2015-09-11
   gettextWithExpat = gettext; # 2016-02-19
+  git-hub = gitAndTools.git-hub; # added 2016-04-29
   grantlee5 = qt5.grantlee;  # added 2015-12-19
   gupnptools = gupnp-tools;  # added 2015-12-19
   htmlTidy = html-tidy;  # added 2014-12-06
@@ -52,6 +54,9 @@ doNotDisplayTwice rec {
   joseki = apache-jena-fuseki; # added 2016-02-28
   jquery_ui = jquery-ui;  # added 2014-09-07
   libdbusmenu_qt5 = qt5.libdbusmenu;  # added 2015-12-19
+  libcap_manpages = libcap.doc; # added 2016-04-29
+  libcap_pam = if stdenv.isLinux then libcap.pam else null; # added 2016-04-29
+  libcap_progs = libcap.out; # added 2016-04-29
   libtidy = html-tidy;  # added 2014-12-21
   links = links2; # added 2016-01-31
   lttngTools = lttng-tools;  # added 2014-07-31
@@ -59,6 +64,7 @@ doNotDisplayTwice rec {
   manpages = man-pages; # added 2015-12-06
   midoriWrapper = midori; # added 2015-01
   mlt-qt5 = qt5.mlt;  # added 2015-12-19
+  module_init_tools = kmod; # added 2016-04-22
   mssys = ms-sys; # added 2015-12-13
   multipath_tools = multipath-tools;  # added 2016-01-21
   mupen64plus1_5 = mupen64plus; # added 2016-02-12
