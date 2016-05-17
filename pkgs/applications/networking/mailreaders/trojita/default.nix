@@ -20,7 +20,8 @@ stdenv.mkDerivation rec {
   };
 
   nativebuildInputs = [ cmake pkgconfig ];
-  buildInputs = [ cmake pkgconfig qt5.qtbase qt5.qtwebkit zlib gpgme ];
+  buildInputs = [ cmake pkgconfig qt5.qtbase qt5.qtwebkit zlib gpgme
+  mimetic];
 
   installPhase = ''
     mkdir -p $out/bin
