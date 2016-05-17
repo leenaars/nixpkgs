@@ -2423,6 +2423,8 @@ in
 
   mimeo = callPackage ../tools/misc/mimeo { };
 
+  mimetic = callPackage ../development/libraries/mimetic { };
+
   minissdpd = callPackage ../tools/networking/minissdpd { };
 
   miniupnpc = callPackage ../tools/networking/miniupnpc { };
