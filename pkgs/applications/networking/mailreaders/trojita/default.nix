@@ -1,13 +1,12 @@
-{ stdenv, fetchgit, cmake, pkgconfig, qt5, zlib, makeDesktopItem
-  #, makeQtWrapper 
+{ stdenv, fetchgit, cmake, pkgconfig, qt5, zlib, makeDesktopItem, gpgme, mimetic
   }:
 
 stdenv.mkDerivation rec {
   name = "trojita-0.6";
   src = fetchgit {
     url = "git://anongit.kde.org/trojita.git";
-    rev = "17ebc1e25e88912aa84825fbc154dd79c064b420";
-    sha256 = "1m4j7n7yj31bgvz2qg685wxcb20ld464px0jdqv0g18bah4pknqm";
+    rev = "6b72a7d5f52bd21df58e247a03c21f66438caaf0";
+    sha256 = "0ilfabryam61pms7qfrmrky6cfayk63zf6l3lmsawhrzysjy6r11";
   };
 
   desktopItem = makeDesktopItem {
@@ -20,10 +19,8 @@ stdenv.mkDerivation rec {
     categories = "Office;Email;";
   };
 
-  nativebuildInputs = [ cmake pkgconfig 
-  #makeQtWrapper 
-  ];
-  buildInputs = [ cmake pkgconfig qt5.qtbase qt5.qtwebkit zlib ];
+  nativebuildInputs = [ cmake pkgconfig ];
+  buildInputs = [ cmake pkgconfig qt5.qtbase qt5.qtwebkit zlib gpgme ];
 
   installPhase = ''
     mkdir -p $out/bin
