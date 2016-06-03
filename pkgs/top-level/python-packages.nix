@@ -17413,6 +17413,19 @@ in modules // {
     };
   });
 
+  pydispatcher = buildPythonPackage {
+    name = "pydispatcher-2.0.5";
+    src = fetchurl {
+      url = "https://pypi.python.org/packages/cd/37/39aca520918ce1935bea9c356bcbb7ed7e52ad4e31bff9b943dfc8e7115b/PyDispatcher-2.0.5.tar.gz";
+      sha256 = "1bswbmhlbqdxlgbxlb6xrlm4k253sg8nvpl1whgsys8p3fg0cw2m";
+    };
+
+    meta = {
+      homepage = http://pydispatcher.sourceforge.net/;
+      description = "Signal-registration and routing infrastructure for use in multiple contexts";
+      license = licenses.bsd3;
+    };
+   };
 
   pydot = buildPythonPackage rec {
     name = "pydot-1.0.2";
