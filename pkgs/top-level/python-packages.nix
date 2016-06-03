@@ -6298,6 +6298,9 @@ in modules // {
     };
 
     propagatedBuildInputs = with self; [ pkgs.gnutls ];
+    patchPhase = ''
+      substituteInPlace gnutls/library/__init__.py --replace "/usr/local/lib" "${pkgs.gnutls33.out}/lib"
+    '';
   };
 
   gitdb = buildPythonPackage rec {
