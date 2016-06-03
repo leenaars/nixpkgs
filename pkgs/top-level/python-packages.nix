@@ -21211,6 +21211,23 @@ in modules // {
     };
   };
 
+  service_identity = buildPythonPackage {
+    name = "service_identity-16.0.0";
+    src = fetchurl {
+      url =
+      "https://pypi.python.org/packages/f3/2a/7c04e7ab74f9f2be026745a9ffa81fd9d56139fa6f5f4b4c8a8c07b2bfba/service_identity-16.0.0.tar.gz";
+      sha256 = "0dih7i7d36nbllcxgfkvbnaj1wlzhwfnpr4b97dz74czylif4c06";
+    };
+
+    propagatedBuildInputs = with self; [ pyopenssl attrs pyasn1 pyasn1-modules];
+
+    meta = {
+      description = "Service identity verification for pyOpenSSL.";
+      homepage = "https://github.com/pyca/service_identity";
+      license = licenses.mit;
+    };
+  };
+
   sexpdata = buildPythonPackage rec {
     name = "sexpdata-0.0.2";
     src = pkgs.fetchurl {
