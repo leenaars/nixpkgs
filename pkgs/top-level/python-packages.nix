@@ -1208,6 +1208,20 @@ in modules // {
     };
   });
 
+  attrs = buildPythonPackage {
+    name = "attrs-15.2.0";
+    src = fetchurl {
+      url =
+      "https://pypi.python.org/packages/8b/76/c57eefda827b981135ccacd4328fceaa3693f79d9da1e5d78fbe59ebd0c4/attrs-15.2.0.tar.gz";
+      sha256 = "1rvypwlhafa9bk7qh042rs9qxs0f3ngpcxckw9af02zsrqp5v2cz";
+    };
+
+    meta = {
+      description = "Python attributes without boilerplate";
+      homepage = https://github.com/hynek/attrs;
+      license = licenses.mit;
+   };
+
   audioread = buildPythonPackage rec {
     name = "audioread-${version}";
     version = "2.1.1";
