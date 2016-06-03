@@ -20715,6 +20715,23 @@ in modules // {
     };
   };
 
+   sqlobject = buildPythonPackage {
+    name = "sqlobject-3.0.0";
+    src = fetchurl {
+      url =
+      "https://pypi.python.org/packages/04/c1/d8fb7b734665fb1c3b53a2b13695318f5f279ea3728b5cb0a2b3dbcd98a5/SQLObject-3.0.0.tar.gz";
+      sha256 = "15g3g7f4yiyplqf54px1dsnmrw3jb7xwx97z8qzgp9ijmm5vpr8r";
+    };
+
+    propagatedBuildInputs = [ pydispatcher FormEncode ];
+
+    meta = {
+      description = "Object Relational Manager for providing an object interface to your database";
+      homepage = "http://www.sqlobject.org/";
+      license = licenses.lgpl21;
+    };
+  };
+
   pgpdump = self.buildPythonPackage rec {
     name = "pgpdump-1.5";
 
