@@ -416,6 +416,8 @@ in
 
   argyllcms = callPackage ../tools/graphics/argyllcms {};
 
+  arj = callPackage ../tools/compression/arj {};
+
   arp-scan = callPackage ../tools/misc/arp-scan { };
 
   artyFX = callPackage ../applications/audio/artyFX {};
