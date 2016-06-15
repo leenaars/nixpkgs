@@ -6742,6 +6742,8 @@ in
 
   cryptopp = callPackage ../development/libraries/crypto++ { };
 
+  cutee = callPackage ../development/libraries/cutee { };
+
   cwiid = callPackage ../development/libraries/cwiid { };
 
   cyrus_sasl = callPackage ../development/libraries/cyrus-sasl {
