@@ -9820,6 +9820,8 @@ in
 
   charybdis = callPackage ../servers/irc/charybdis {};
 
+  comt  = callPackage ../servers/comt {};
+
   couchdb = callPackage ../servers/http/couchdb {
     spidermonkey = spidermonkey_185;
     python = python27;
