@@ -15,6 +15,7 @@ stdenv.mkDerivation rec {
 
   # compatibility hack (for mypaint at least)
   postInstall = ''
+    mkdir -p $dev/lib/pkgconfig
     ln -s json-c.pc "$dev/lib/pkgconfig/json.pc"
   '';
 

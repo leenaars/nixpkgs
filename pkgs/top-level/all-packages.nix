@@ -1409,9 +1409,7 @@ in
 
   eid-viewer = callPackage ../tools/security/eid-viewer { };
 
-  emscripten = callPackage ../development/compilers/emscripten { };
-
-  emscriptenfastcomp = callPackage ../development/compilers/emscripten-fastcomp { };
+  
 
   efibootmgr = callPackage ../tools/system/efibootmgr { };
 
@@ -4521,17 +4519,6 @@ in
 
   dotnetPackages = recurseIntoAttrs (callPackage ./dotnet-packages.nix {});
 
-  go_1_4 = callPackage ../development/compilers/go/1.4.nix {
-    inherit (darwin.apple_sdk.frameworks) Security;
-  };
-
-  go_1_5 = callPackage ../development/compilers/go/1.5.nix {
-    inherit (darwin.apple_sdk.frameworks) Security Foundation;
-  };
-
-  go_1_6 = callPackage ../development/compilers/go/1.6.nix {
-    inherit (darwin.apple_sdk.frameworks) Security Foundation;
-  };
 
   go = self.go_1_5;
 
@@ -9555,6 +9542,34 @@ in
   buildBowerComponents = callPackage ../development/bower-modules/generic { };
 
   ### DEVELOPMENT / GO MODULES
+
+  buildEmscriptenPackage = callPackage ../development/em-modules/generic { };
+
+  emscripten = callPackage ../development/compilers/emscripten { };
+
+  emscriptenPackages = recurseIntoAttrs (callPackage ./emscripten-packages.nix {
+    overrides = (config.perlPackageOverrides or (p: {})) pkgs;
+  });
+
+#   jsonc = callPackage ../development/jasonccc.nix {
+#     stdenv = emscriptenStdenv;
+#   };
+ 
+  emscriptenStdenv = stdenv // { mkDerivation = buildEmscriptenPackage; };
+
+  emscriptenfastcomp = callPackage ../development/compilers/emscripten-fastcomp { };
+
+  go_1_4 = callPackage ../development/compilers/go/1.4.nix {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
+
+  go_1_5 = callPackage ../development/compilers/go/1.5.nix {
+    inherit (darwin.apple_sdk.frameworks) Security Foundation;
+  };
+
+  go_1_6 = callPackage ../development/compilers/go/1.6.nix {
+    inherit (darwin.apple_sdk.frameworks) Security Foundation;
+  };
 
   go14Packages = callPackage ./go-packages.nix {
     go = go_1_4;
@@ -16607,6 +16622,8 @@ in
   robomongo = qt5.callPackage ../applications/misc/robomongo { };
 
   rucksack = callPackage ../development/tools/rucksack { };
+
+  sam-ba = callPackage ../tools/misc/sam-ba { };
 
   opkg = callPackage ../tools/package-management/opkg { };
 
