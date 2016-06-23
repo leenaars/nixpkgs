@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, autoreconfHook, libtool, gettext }:
+{ stdenv, fetchurl, autoreconfHook, libtool }:
 
 stdenv.mkDerivation rec {
   version = "3.10.22";
@@ -9,12 +9,31 @@ stdenv.mkDerivation rec {
     sha256 = "1nx7jqxwqkihhdmdbahhzqhjqshzw1jcsvwddmxrwrn8rjdlr7jq";
   };
 
-  buildInputs = [ autoreconfHook libtool gettext ];
+  patches = [
+    ./arj-3.10.22-arches_align.patch
+    ./arj-3.10.22-no_remove_static_const.patch
+    ./arj-3.10.22-64_bit_clean.patch
+    ./arj-3.10.22-parallel_build.patch
+    ./arj-3.10.22-use_safe_strcpy.patch
+    ./arj-3.10.22-doc_refer_robert_k_jung.patch
+    ./arj-3.10.22-security_format.patch
+    ./arj-3.10.22-missing-protos.patch
+    ./arj-3.10.22-custom-printf.patch
+    ./arj-3.10.22-quotes.patch
+    ./arj-3.10.22-security-afl.patch
+    ./arj-3.10.22-security-traversal-dir.patch
+    ./arj-3.10.22-security-traversal-symlink.patch
+  ];
 
-  # Config for building with gcc (rather than nmake) in ./gnu
-  patchPhase = "cd gnu && mv configure.in configure.ac";
+  buildInputs = [ libtool autoreconfHook ];
 
-  configureScript = "./gnu/configure";
+  preConfigure = ''
+  substituteInPlace gnu/config.guess --replace "ld --help" "ld.bfg --help"
+  cd gnu 
+  echo `pwd`
+  rm makefile
+  mv gnu/* ./ 
+  '';
 
   meta = {
     homepage    = http://arj.sourceforge.net/;
