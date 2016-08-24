@@ -12765,6 +12765,8 @@ in modules // {
 
     preConfigure = "cd python";
 
+    doCheck = false;
+
     meta = {
       description = "A Python wrapper around libmagic";
       homepage = http://www.darwinsys.com/file/;
