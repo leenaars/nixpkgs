@@ -17233,6 +17233,8 @@ in
 
   geogebra = callPackage ../applications/science/math/geogebra { };
 
+  jasp = callPackage ../applications/science/math/jasp { };
+
   maxima = callPackage ../applications/science/math/maxima {
     sbcl = sbcl_1_3_12;
     ecl = null;
