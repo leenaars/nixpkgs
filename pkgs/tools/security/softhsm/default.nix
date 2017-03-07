@@ -1,4 +1,7 @@
-{ stdenv, fetchurl, botan }:
+{ stdenv, fetchurl, botan
+, enableSqlite ? true, sqlite
+, enablep11-kit ? false
+, disableNonPaged ? true }:
 
 stdenv.mkDerivation rec {
 
@@ -10,15 +13,40 @@ stdenv.mkDerivation rec {
     sha256 = "1xw53zkv5xb9pxa8q84kh505yd6pkavxd12x2fjgqi6s12p2hsgb";
   };
 
-  configureFlags = [
-    "--with-crypto-backend=botan"
-    "--with-botan=${botan}"
-    "--sysconfdir=$out/etc"
-    "--localstatedir=$out/var"
+  configureFlags =
+    [
+      "--with-crypto-backend=botan"
+      "--with-botan=${botan}"
+      "--sysconfdir" "$out/etc"
+      "--localstatedir" "$out/var"
+    ]
+
+    ++ stdenv.lib.optional enablep11-kit
+
+    [ "--with-p11-kit" "$out/share/p11-kit" ]
+
+    ++ stdenv.lib.optional (!enablep11-kit)
+
+    [ "--disable-p11-kit" ]
+
+    ++ stdenv.lib.optional disableNonPaged
+
+    [
+      "--disable-non-paged-memory"
+    ]
+
+    ++ stdenv.lib.optional enableSqlite
+
+    [
+      "--with-sqlite3=${sqlite.bin}"
+      "--with-migrate"
+      "--with-objectstore-backend-db"
     ];
 
-  buildInputs = [ botan ];
+  buildInputs = [ botan ]
+    ++ stdenv.lib.optional enableSqlite sqlite;
 
+  preInstall = "mkdir -p $out/share/p11-kit";
   postInstall = "rm -rf $out/var";
 
   meta = with stdenv.lib; {
