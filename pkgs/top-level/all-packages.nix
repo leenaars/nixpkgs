@@ -2600,6 +2600,8 @@ with pkgs;
 
   netsniff-ng = callPackage ../tools/networking/netsniff-ng { };
 
+  neubot = callPackage ../tools/networking/neubot { };
+
   nginx-config-formatter = callPackage ../tools/misc/nginx-config-formatter { };
 
   ninka = callPackage ../development/tools/misc/ninka { };
