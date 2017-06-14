@@ -326,6 +326,8 @@ in {
 
   python-stdnum = callPackage ../development/python-modules/python-stdnum { };
 
+  python-vlc = callPackage ../development/python-modules/python-vlc { };
+
   pytimeparse =  callPackage ../development/python-modules/pytimeparse { };
 
   PyWebDAV = callPackage ../development/python-modules/pywebdav { };
