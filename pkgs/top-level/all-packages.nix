@@ -2828,6 +2828,8 @@ with pkgs;
 
   multitail = callPackage ../tools/misc/multitail { };
 
+  mu-editor = callPackage ../applications/editors/mueditor { };
+
   mxt-app = callPackage ../misc/mxt-app { };
 
   nagstamon = callPackage ../tools/nagstamon {
