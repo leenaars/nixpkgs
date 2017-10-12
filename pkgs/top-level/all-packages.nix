@@ -4724,6 +4724,8 @@ with pkgs;
 
   trousers = callPackage ../tools/security/trousers { };
 
+  trufflehog = callPackage ../tools/security/trufflehog { };
+
   tryton = callPackage ../applications/office/tryton { };
 
   trytond = callPackage ../applications/office/trytond { };
