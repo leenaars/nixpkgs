@@ -7786,6 +7786,8 @@ with pkgs;
     aspell = aspell.override { searchNixProfiles = false; };
   };
 
+  atcore = callPackage ../development/libraries/atcore { };
+
   attica = callPackage ../development/libraries/attica { };
 
   attr = callPackage ../development/libraries/attr { };
