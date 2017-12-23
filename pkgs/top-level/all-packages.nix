@@ -11607,6 +11607,21 @@ with pkgs;
     php = pkgs.php.override { inherit apacheHttpd; };
 
     subversion = pkgs.subversion.override { httpServer = true; inherit apacheHttpd; };
+
+    # modules for Redwax server
+
+    mod_ca = callPackage ../servers/http/apache-modules/mod_ca { };
+
+    mod_crl = callPackage ../servers/http/apache-modules/mod_crl { };
+
+    mod_ocsp = callPackage ../servers/http/apache-modules/mod_ocsp { };
+
+    mod_scep = callPackage ../servers/http/apache-modules/mod_scep { };
+
+    mod_spkac = callPackage ../servers/http/apache-modules/mod_spkac { };
+
+    mod_timestamp = callPackage ../servers/http/apache-modules/mod_timestamp { };
+
   };
 
   apacheHttpdPackages = apacheHttpdPackagesFor pkgs.apacheHttpd pkgs.apacheHttpdPackages;
