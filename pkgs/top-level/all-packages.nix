@@ -3158,6 +3158,8 @@ with pkgs;
 
   libwebsockets = callPackage ../development/libraries/libwebsockets { };
 
+  lillydap = callPackage ../tools/networking/lillydap { };
+
   limesurvey = callPackage ../servers/limesurvey { };
 
   logcheck = callPackage ../tools/system/logcheck {
