@@ -6886,6 +6886,8 @@ with pkgs;
 
   kt = callPackage ../tools/misc/kt {};
 
+  arpa2cm = callPackage ../development/tools/build-managers/arpa2cm { };
+
   asn2quickder = callPackage ../development/tools/asn2quickder {};
 
   astyle = callPackage ../development/tools/misc/astyle { };
