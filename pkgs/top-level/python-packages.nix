@@ -21840,6 +21840,8 @@ EOF
   pysigset = callPackage ../development/python-modules/pysigset { };
 
   us = callPackage ../development/python-modules/us { };
+
+  word_cloud = callPackage ../tools/typesetting/word_cloud { };
 });
 
 in fix' (extends overrides packages)
