@@ -26,6 +26,17 @@ in
         type = types.path;
         description = "Subdirectory used for reverse proxy setups";
       };
+      safe = mkOption {
+        default = true;
+        type = types.bool;
+        description = "Do not write changes directly to local files. Instead, store them in a temporary file that can be committed afterwards with the --commit flag";
+      };
+      commands = mkOption {
+        default = [];
+        type = types.listOf types.str;
+        example = [ "make build" "make test" ];
+        description = "Set commands that can be executed from the web UI";
+      };
     };
   };
 
@@ -55,7 +66,7 @@ in
         Restart = "on-failure";
         WorkingDirectory = stateDir;
         PrivateTmp = true;
-        ExecStart = "${pkgs.leaps.bin}/bin/leaps -path ${toString cfg.path} -address ${cfg.address}:${toString cfg.port}";
+        ExecStart = ''${pkgs.leaps.bin}/bin/leaps -path ${toString cfg.path} -address ${cfg.address}:${toString cfg.port} ${optionalString cfg.safe "-safe"} ${optionalString (cfg.commands != []) "concatStringsSep '-cmd ' cfg.commands" } '';
       };
     };
   };
