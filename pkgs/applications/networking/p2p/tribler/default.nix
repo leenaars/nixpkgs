@@ -3,11 +3,11 @@
 
 stdenv.mkDerivation rec {
   name = "tribler-${version}";
-  version = "7.1.2";
+  version = "7.1.5";
 
   src = fetchurl {
-    url = "https://github.com/Tribler/tribler/releases/download/v${version}/Tribler-v${version}.tar.gz";
-    sha256 = "1ayzqx4358qlx56hsnsn5s8xl6mzdb6nw4kwsalmp86dw6vmmis8";
+    url = "https://github.com/Tribler/tribler/archive/V${version}.tar.gz";
+    sha256 = "18y51q7f733pfng4zqya2sc5j0dis8vg9qdxbl4p5zlrnqpkw597";
   };
 
   buildInputs = [
@@ -43,6 +43,7 @@ stdenv.mkDerivation rec {
     pythonPackages.sip
     pythonPackages.pillow
     pythonPackages.networkx
+    pythonPackages.tkinter
   ];
 
   postPatch = ''
