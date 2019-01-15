@@ -1844,6 +1844,8 @@ in {
 
   ipfsapi = callPackage ../development/python-modules/ipfsapi { };
 
+  py-ipv8 = callPackage ../development/python-modules/py-ipv8 { };
+
   itsdangerous = callPackage ../development/python-modules/itsdangerous { };
 
   iniparse = callPackage ../development/python-modules/iniparse { };
