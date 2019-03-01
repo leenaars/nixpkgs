@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
   name = "${pname}-${version}";
 
   src = fetchurl {
-    url = "mirror://sourceforge/project/${pname}/Version_2_4_0/${name}-Source.tar.gz";
+    url = "mirror://sourceforge/project/${pname}/Version_${builtins.replaceStrings ["."] ["_"] version}/${name}-Source.tar.gz";
     sha256 = "0pbyq6nrr9g3crlsng660768167s0fybvcpzbfc0w9kkhs2jwrr2";
   };
 
