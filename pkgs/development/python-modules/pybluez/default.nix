@@ -5,16 +5,16 @@
 }:
 
 buildPythonPackage rec {
-  version = "unstable-20160819";
+  version = "0.23";
   pname = "pybluez";
 
   propagatedBuildInputs = [ pkgs.bluez ];
 
   src = fetchFromGitHub {
-    owner = "karulis";
+    owner = pname;
     repo = pname;
-    rev = "a0b226a61b166e170d48539778525b31e47a4731";
-    sha256 = "104dm5ngfhqisv1aszdlr3szcav2g3bhsgzmg4qfs09b3i5zj047";
+    rev = version;
+    hash = "sha256-o1L6ewSZrt6laPJMKikeVlMwltoOgg4p3o1x7u0bdpI=";
   };
 
   # the tests do not pass
