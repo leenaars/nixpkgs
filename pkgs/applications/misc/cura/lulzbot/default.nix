@@ -27,12 +27,12 @@ let
 in
 mkDerivation rec {
   pname = "cura-lulzbot";
-  version = "3.6.21";
+  version = "3.6.23";
 
   src = fetchgit {
-    url = "https://code.alephobjects.com/source/cura-lulzbot.git";
-    rev = "7faeb18604c83004846a02c60cb240708db0034f";
-    sha256 = "10q38s8c8x6xkh1vns4p3iqa5y267vrjh5vq8h55mg1q5001scyq";
+    url = "https://gitlab.com/lulzbot3d/cura-le/cura-lulzbot";
+    rev = "f3dfdd433619d670d8341b3f4d5c29bc6c48d4ce";
+    sha256 = "1nq2jjjky5l5r16vcb1l49zsvqhkaq23dh4ghwdss88cpay8c9fk";
   };
 
   buildInputs = [ qtbase qtquickcontrols2 ];
@@ -52,6 +52,7 @@ mkDerivation rec {
 
   preFixup = ''
     substituteInPlace "$out/bin/cura-lulzbot" --replace 'import cura.CuraApplication' 'import Savitar; import cura.CuraApplication'
+    substituteInPlace "$out/bin/cura-lulzbot" --replace 'linux_distro_name =' "linux_distro_name = 'nixpkgs'#"
     ln -sT "${curaBinaryData}/cura/resources/firmware" "$out/share/cura/resources/firmware"
     ln -sT "${uraniumLulzbot}/share/uranium" "$out/share/uranium"
     ${jq}/bin/jq --arg out "$out" '.build=$out' >"$out/version.json" <<'EOF'
@@ -68,6 +69,7 @@ mkDerivation rec {
   '';
 
   postFixup = ''
+    substituteInPlace "$out/bin/cura-lulzbot" --replace 'linux_distro_name =' 'linux_distro_name = "nixpkgs" #'
     wrapPythonPrograms
     wrapQtApp "$out/bin/cura-lulzbot"
   '';
